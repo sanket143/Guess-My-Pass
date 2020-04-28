@@ -9,33 +9,43 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   List<int> numbers = [0, 0, 0, 0];
   List<int> pass = [0, 0, 0, 0];
+  List<int> indicator = [];
+  int lives = 10;
   Random rng = new Random();
   bool isGameFinished = false;
 
   void generatePass(){
     for(var i = 0; i < 4; i++){
-      pass[i] = rng.nextInt(10);
+      pass[i] = rng.nextInt(6);
     }
     print(pass);
   }
 
-  bool findNum(){
-    var temp = pass;
+  void test(){
+    List<int> temp = List.from(pass.cast());
+    List<int> tempIndi = [];
+    print(pass);
+    for(var i = 0; i < 4; i++){
+      if(numbers[i] == temp[i]){
+        tempIndi.add(1);
+        temp[i] = -1;
+      }
+    }
     for(var i = 0; i < 4; i++){
       for(var j = 0; j < 4; j++){
         if(numbers[i] == temp[j]){
-          if(i == j){
-
-          }
+          tempIndi.add(0);
+          temp[j] = -1;
         }
       }
     }
-  }
 
-  void test(){
-    for(var i = 0; i < 4; i++){
-      print(pass.where((item) => item == numbers[i]));
-    }
+    setState(() {
+      if(tempIndi.join(" ") == "1 1 1 1"){
+        isGameFinished = true;
+      }
+      indicator = tempIndi;
+    });
   }
 
   @override
@@ -47,6 +57,7 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.red,
       body: Column(
         children: <Widget> [
           SizedBox(
@@ -59,7 +70,8 @@ class _HomepageState extends State<Homepage> {
                 "GUESS MY PASS!",
                 style: TextStyle(
                   fontSize: 30,
-                  fontWeight: FontWeight.bold
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white
                 ),
               )
             )
@@ -70,10 +82,26 @@ class _HomepageState extends State<Homepage> {
           Container(
             child: Center(
               child: Text(
-                "1 0 1 1",
+                "TRIES: $lives",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 28
+                )
+              )
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Container(
+            child: Center(
+              child: Text(
+                indicator.join(" "),
                 style: TextStyle(
                   fontSize: 28,
-                  fontWeight: FontWeight.w700
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white
                 )
               )
             )
@@ -97,17 +125,17 @@ class _HomepageState extends State<Homepage> {
                       onTap: (){
                         print(index);
                         setState((){
-                          this.numbers[index] = (this.numbers[index] + 1) % 10;
+                          this.numbers[index] = (this.numbers[index] + 1) % 6;
                         });
                       },
                       child: Card(
-                        color: Colors.blue,
+                        color: Colors.white,
 
                         child: Center(
                           child: Text(
                             numbers[index].toString(),
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.black,
                               fontSize: 20
                             )
                           )
@@ -122,11 +150,11 @@ class _HomepageState extends State<Homepage> {
           Container(
             child: RaisedButton(
               onPressed: test,
-              color: isGameFinished ? Colors.blueAccent : Colors.blue,
+              color: isGameFinished ? Colors.blueAccent : Colors.white,
               child: Text(
                 isGameFinished ? "Play Again" : "Test",
                 style: TextStyle(
-                  color: Colors.white
+                  color: Colors.black
                 )
               )
             ),
